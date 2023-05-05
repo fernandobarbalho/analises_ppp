@@ -147,3 +147,15 @@ E agora vamos fazer a análise por **super-segmento**.
 
 questionr::freq(dados_radar_ppp_trabalho$supersegmento , cum = TRUE, sort = "dec", total = TRUE, valid = FALSE)
 ```
+
+### Gráficos de ranking
+
+### Associação entre variavéis categóricas
+
+```{r}
+teste_chi_quadrado<- chisq.test(dados_radar_ppp_trabalho$situacao, dados_radar_ppp_trabalho$supersegmento, simulate.p.value = TRUE)
+
+teste_chi_quadrado$stdres
+```
+
+### Análise de distribuição bivariada
