@@ -1,0 +1,149 @@
+---
+title: "Análises PPP"
+author: "Fernando Barbalho"
+format: html
+editor: visual
+execute:
+  cache: true
+---
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+library(tidyverse)
+library(questionr)
+
+dados_radar_ppp_trabalho <- readRDS("~/Github/analises_ppp/dados_radar_ppp_trabalho.rds")
+```
+
+## Algumas análises exploratórias de dados
+
+Começamos a nossa análise identificando as particularidades das diversas variáveis que compõem o banco de dados de PPP que temos disponível. Aqui a ideia é identificar pontos extremos, ausência de valores, associações entre variáveis, distribuição de valores e até mesmo identificação de padrões.
+
+### Variáveis com valores ausentes
+
+A identificação de variáveis com valores ausentes é importante para checar a consistência dos dados. Em grande parte das situações a ausência de dados pode significar falhas no processo de coleta ou tabulação dos dados.
+
+```{r echo=FALSE}
+summary(dados_radar_ppp_trabalho)
+```
+
+Como se vê logo acima \<...\>
+
+### Distribuição dos dados de variáveis quantitativas
+
+O box-plot costuma ser a melhor ferramenta para visualização da distruição dos dados e identificação de valores extremos. Aqui faremos uma análise de cada variável quantitativa, começando com a mais relevantes: **valor do contrato**.
+
+```{r}
+#| echo: false
+#| message: false
+#| warning: false
+
+dados_radar_ppp_trabalho %>%
+  mutate(grupo = "todas pps") %>%
+  ggplot() +
+  geom_boxplot(aes(x= grupo, y=valor_contrato)) +
+  scale_y_log10()
+  
+
+```
+
+Aplicando a escala logarítimica (...)
+
+Agora vamos à distribuição dos valores de resssarcimentos de estudos em Reais
+
+```{r}
+#| echo: false
+#| message: false
+#| warning: false
+
+dados_radar_ppp_trabalho %>%
+  mutate(grupo = "todas pps") %>%
+  ggplot() +
+  geom_boxplot(aes(x= grupo, y=ressarcimento_estudos_reais)) +
+  scale_y_log10()
+```
+
+\<Fazer a análise indicando que usa a escala logartimica, informar a quantidade baixa de contratos que registraram ressarcimentos, indicar a quantidade de contratos com pontos abaixo do mínimo do box-plot e ponto extremo superior.\>
+
+Por fim, a análise de distribuição para a variável de ressacimentos de estudos em dólares.
+
+```{r}
+#| echo: false
+#| message: false
+#| warning: false
+
+dados_radar_ppp_trabalho %>%
+  mutate(grupo = "todas pps") %>%
+  ggplot() +
+  geom_boxplot(aes(x= grupo, y=ressarcimento_estudos_dolares)) 
+```
+
+\<Fazer a análise indicando que usa a escala logartimica, informar a quantidade baixa de contratos que registraram ressarcimentos, indicar a quantidade de contratos com pontos abaixo do mínimo do box-plot e ponto extremo superior.\>
+
+### Tabelas de frequência
+
+Para as variáveis categóricas, ou seja as não numéricas, uma das mais profíquas análises que podem ser feitas é a de tabela de frequência. Nesse caso são indicadas as quantidades de ocorrência de cada classe das variáveis categórias com suas respectivas contribuições percentuais. Vamos observar o que ocorre em cada uma das variáveis mais importates. Começando por **atuação**.
+
+```{r}
+#| echo: false
+#| message: false
+#| warning: false
+
+questionr::freq(dados_radar_ppp_trabalho$atuacao , cum = TRUE, sort = "dec", total = TRUE)
+```
+
+\<fazer uma análise das frequências de cada uma das classes\>
+
+Um gráfico ajuda a deixar mais evidente a importância das duas classes mais frequentes em relação às demais.
+
+```{r}
+#| echo: false
+#| message: false
+#| warning: false
+
+dados_radar_ppp_trabalho %>%
+  group_by(atuacao) %>%
+  summarise(quantidade =n()) %>%
+  ungroup() %>%
+  mutate(atuacao = reorder(atuacao, quantidade)) %>%
+  ggplot() +
+  geom_col(aes(x= quantidade, y= atuacao))
+  
+```
+
+A próxima variável é **situação**.
+
+```{r}
+#| echo: false
+#| message: false
+#| warning: false
+
+questionr::freq(dados_radar_ppp_trabalho$situacao , cum = TRUE, sort = "dec", total = TRUE, valid = FALSE)
+```
+
+\<Analisar a tabela, dando destaque aos três primeiros, e também à soma de paralisado com cancelado\>
+
+A opção de visualização em forma de gráfico
+
+```{r}
+#| echo: false
+#| message: false
+#| warning: false
+
+dados_radar_ppp_trabalho %>%
+  group_by(situacao) %>%
+  summarise(quantidade =n()) %>%
+  ungroup() %>%
+  mutate(situacao = reorder(situacao, quantidade)) %>%
+  ggplot() +
+  geom_col(aes(x= quantidade, y= situacao))
+```
+
+E agora vamos fazer a análise por **super-segmento**.
+
+```{r}
+#| echo: false
+#| message: false
+#| warning: false
+
+questionr::freq(dados_radar_ppp_trabalho$supersegmento , cum = TRUE, sort = "dec", total = TRUE, valid = FALSE)
+```

@@ -28,3 +28,6 @@ dados_radar_ppp %>%
   mutate(ressarcimento_estudos_dolares= stringr::str_replace_all(ressarcimento_estudos_dolares,"[,]","")) %>%
   mutate(ressarcimento_estudos_dolares= stringr::str_replace_all(ressarcimento_estudos_dolares,"[.]",".")) %>%
   mutate(ressarcimento_estudos_dolares= as.numeric(ressarcimento_estudos_dolares))
+
+saveRDS(dados_radar_ppp_trabalho, file = "dados_radar_ppp_trabalho.rds")
+
