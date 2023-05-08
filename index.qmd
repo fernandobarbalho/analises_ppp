@@ -292,6 +292,24 @@ nomes_segmentos_entes %>%
 
 ```
 
+```{r}
+#| echo: false
+#| message: false
+#| warning: false
+
+
+nomes_segmentos_entes %>%
+  ggplot() +
+  geom_bar(aes(fill= fct_reorder(supersegmento, supersegmento, length), 
+               y = fct_reorder(ente, ente, length, .desc = TRUE) ), position="fill") +
+  scale_fill_viridis(discrete = TRUE)+
+  theme_light() +
+  labs(y= "ente",
+       fill="segmento")
+
+```
+
+
 
 Ente x Situação
 
