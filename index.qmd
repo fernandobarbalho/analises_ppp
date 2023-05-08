@@ -275,6 +275,24 @@ teste_chi_quadrado$stdres
 ```
 
 
+```{r}
+#| echo: false
+#| message: false
+#| warning: false
+
+
+nomes_segmentos_entes %>%
+  ggplot() +
+  geom_bar(aes(y= fct_reorder(supersegmento, supersegmento, length), 
+               fill = fct_reorder(ente, ente, length, .desc = TRUE) ), position="fill") +
+  scale_fill_viridis(discrete = TRUE)+
+  theme_light() +
+  labs(fill= "ente",
+       y="segmento")
+
+```
+
+
 Ente x Situação
 
 ```{r}
@@ -286,8 +304,6 @@ Ente x Situação
 nomes_entes_situacao<-
   dados_radar_ppp_trabalho %>%
   filter(situacao %in% c("Contrato Iniciado",
-                         "Paralisado",
-                         "Cancelado",
                          "Modelagem - Estudos Liderados pelo Setor Público Iniciados")) %>%
   distinct(nome, ente, situacao)
 
@@ -295,6 +311,40 @@ nomes_entes_situacao<-
 teste_chi_quadrado<- chisq.test(nomes_entes_situacao$ente, nomes_entes_situacao$situacao, simulate.p.value = TRUE)
 
 teste_chi_quadrado$stdres
+```
+
+```{r}
+#| echo: false
+#| message: false
+#| warning: false
+
+nomes_entes_situacao %>%
+  mutate(situacao= str_wrap(situacao,30)) %>%
+  ggplot() +
+  geom_bar(aes(y= fct_reorder(situacao, situacao, length), 
+               fill = fct_reorder(ente, ente, length, .desc = TRUE) ), position="fill") +
+  scale_fill_viridis(discrete = TRUE)+
+  theme_light() +
+  labs(fill= "ente",
+       y="situação")
+
+```
+
+```{r}
+#| echo: false
+#| message: false
+#| warning: false
+
+nomes_entes_situacao %>%
+  mutate(situacao= str_wrap(situacao,30)) %>%
+  ggplot() +
+  geom_bar(aes(fill= fct_reorder(situacao, situacao, length), 
+               y = fct_reorder(ente, ente, length, .desc = TRUE) ), position="fill") +
+  scale_fill_viridis(discrete = TRUE)+
+  theme_light() +
+  labs(y= "ente",
+       fill="situação")
+
 ```
 
 
@@ -315,6 +365,44 @@ dados_radar_ppp_trabalho %>%
   facet_grid(situacao~.) +
   scale_x_log10()
 
+
+
+```
+
+```{r}
+#| echo: false
+#| message: false
+#| warning: false
+
+#Gráfico com contratros iniciados
+dados_radar_ppp_trabalho %>%
+  filter(situacao %in% c("Contrato Iniciado")) |>
+  distinct(nome, valor_contrato, ente, supersegmento) |> 
+  ggplot()+
+  geom_boxplot(aes(x=supersegmento, y = valor_contrato)) +
+  facet_wrap(ente~., nrow = 1) +
+  scale_y_log10() +
+  theme(
+    axis.text.x = element_text(angle = 90)
+  )
+
+```
+
+```{r}
+#| echo: false
+#| message: false
+#| warning: false
+
+dados_radar_ppp_trabalho %>%
+  filter(situacao %in% c("Contrato Iniciado")) |>
+  distinct(nome, valor_contrato, ente, supersegmento) |> 
+  ggplot()+
+  geom_boxplot(aes(x=ente, y = valor_contrato)) +
+  facet_wrap(supersegmento~., nrow = 1) +
+  scale_y_log10() +
+  theme(
+    axis.text.x = element_text(angle = 90)
+  )
 
 
 ```
