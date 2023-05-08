@@ -10,6 +10,8 @@ execute:
 ```{r echo=FALSE, message=FALSE, warning=FALSE}
 library(tidyverse)
 library(questionr)
+library(viridis)
+
 
 dados_radar_ppp_trabalho <- readRDS("~/Github/analises_ppp/dados_radar_ppp_trabalho.rds")
 ```
@@ -117,7 +119,11 @@ A próxima variável é **situação**.
 #| message: false
 #| warning: false
 
-questionr::freq(dados_radar_ppp_trabalho$situacao , cum = TRUE, sort = "dec", total = TRUE, valid = FALSE)
+nomes_situacao_distintos<-
+  dados_radar_ppp_trabalho %>%
+  distinct(nome, situacao)
+
+questionr::freq(nomes_situacao_distintos$situacao , cum = TRUE, sort = "dec", total = TRUE, valid = FALSE)
 ```
 
 \<Analisar a tabela, dando destaque aos três primeiros, e também à soma de paralisado com cancelado\>
@@ -129,7 +135,7 @@ A opção de visualização em forma de gráfico
 #| message: false
 #| warning: false
 
-dados_radar_ppp_trabalho %>%
+nomes_situacao_distintos %>%
   group_by(situacao) %>%
   summarise(quantidade =n()) %>%
   ungroup() %>%
@@ -145,17 +151,104 @@ E agora vamos fazer a análise por **super-segmento**.
 #| message: false
 #| warning: false
 
-questionr::freq(dados_radar_ppp_trabalho$supersegmento , cum = TRUE, sort = "dec", total = TRUE, valid = FALSE)
+nomes_segmentos_distintos<-
+  dados_radar_ppp_trabalho %>%
+  distinct(nome, supersegmento)
+
+questionr::freq(nomes_segmentos_distintos$supersegmento , cum = TRUE, sort = "dec", total = TRUE, valid = FALSE)
+```
+
+O gráfico de ranking
+
+```{r}
+#| echo: false
+#| message: false
+#| warning: false
+
+nomes_segmentos_distintos %>%
+  group_by(supersegmento) %>%
+  summarise(quantidade =n()) %>%
+  ungroup() %>%
+  mutate(supersegmento = reorder(supersegmento, quantidade)) %>%
+  ggplot() +
+  geom_col(aes(x= quantidade, y= supersegmento))
 ```
 
 ### Gráficos de ranking
 
+Para os gráficos de ranking começamos com a indicação dos projetos com maiores valores de contratos em execução, sendo apresentados em ordem decrescente por empresa
+
+```{r}
+#| echo: false
+#| message: false
+#| warning: false
+
+dados_radar_ppp_trabalho %>%
+  filter(situacao == "Contrato Iniciado") %>%
+  distinct(nome, valor_contrato) %>%
+  mutate(
+    nome= str_wrap(nome,40) ,
+    nome = reorder(nome, valor_contrato)) %>%
+  slice_max(order_by = valor_contrato, n=10) %>%
+  ggplot() +
+  geom_col(aes(x= valor_contrato, y=nome))
+
+```
+
+
+
 ### Associação entre variavéis categóricas
 
 ```{r}
-teste_chi_quadrado<- chisq.test(dados_radar_ppp_trabalho$situacao, dados_radar_ppp_trabalho$supersegmento, simulate.p.value = TRUE)
+top_80pc_situacaoes<-
+  dados_radar_ppp_trabalho %>%
+  filter(situacao %in% c("Contrato Iniciado",
+                         "Paralisado",
+                         "Cancelado",
+                         "Modelagem - Estudos Liderados pelo Setor Público Iniciados")) %>%
+  distinct(nome, situacao, supersegmento)
+
+
+teste_chi_quadrado<- chisq.test(top_80pc_situacaoes$supersegmento, top_80pc_situacaoes$situacao, simulate.p.value = TRUE)
 
 teste_chi_quadrado$stdres
 ```
+
+```{r}
+#| echo: false
+#| message: false
+#| warning: false
+
+
+top_80pc_situacaoes %>%
+  mutate(situacao = str_wrap(situacao,20)) %>%
+  ggplot() +
+  geom_bar(aes(y= fct_reorder(situacao, situacao, length), fill = fct_reorder(supersegmento, supersegmento, length,.desc = TRUE)), position="fill") +
+  scale_fill_viridis(discrete = TRUE)+
+  theme_light() +
+  labs(fill= "segmento",
+       y="situação")
+
+
+```
+
+```{r}
+#| echo: false
+#| message: false
+#| warning: false
+
+
+top_80pc_situacaoes %>%
+  mutate(situacao = str_wrap(situacao,20)) %>%
+  ggplot() +
+  geom_bar(aes(y= fct_reorder(supersegmento, supersegmento, length), 
+               fill = fct_reorder(situacao, situacao, length, .desc = TRUE) ), position="fill") +
+  scale_fill_viridis(discrete = TRUE)+
+  theme_light() +
+  labs(fill= "situação",
+       y="segmento")
+
+```
+
 
 ### Análise de distribuição bivariada
