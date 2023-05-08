@@ -199,6 +199,9 @@ dados_radar_ppp_trabalho %>%
 
 ### Associação entre variavéis categóricas
 
+
+Situação x Supersegmento
+
 ```{r}
 top_80pc_situacaoes<-
   dados_radar_ppp_trabalho %>%
@@ -250,5 +253,69 @@ top_80pc_situacaoes %>%
 
 ```
 
+Ente x Supersegmento
 
-### Análise de distribuição bivariada
+
+```{r}
+#| echo: false
+#| message: false
+#| warning: false
+
+
+nomes_segmentos_entes<-
+  dados_radar_ppp_trabalho %>%
+  filter(situacao %in% c("Contrato Iniciado",
+                         "Modelagem - Estudos Liderados pelo Setor Público Iniciados")) %>%
+  distinct(nome, ente, supersegmento)
+
+
+teste_chi_quadrado<- chisq.test(nomes_segmentos_entes$ente, nomes_segmentos_entes$supersegmento, simulate.p.value = TRUE)
+
+teste_chi_quadrado$stdres
+```
+
+
+Ente x Situação
+
+```{r}
+#| echo: false
+#| message: false
+#| warning: false
+
+
+nomes_entes_situacao<-
+  dados_radar_ppp_trabalho %>%
+  filter(situacao %in% c("Contrato Iniciado",
+                         "Paralisado",
+                         "Cancelado",
+                         "Modelagem - Estudos Liderados pelo Setor Público Iniciados")) %>%
+  distinct(nome, ente, situacao)
+
+
+teste_chi_quadrado<- chisq.test(nomes_entes_situacao$ente, nomes_entes_situacao$situacao, simulate.p.value = TRUE)
+
+teste_chi_quadrado$stdres
+```
+
+
+
+### Análise de distribuição multivariada
+
+```{r}
+#| echo: false
+#| message: false
+#| warning: false
+
+dados_radar_ppp_trabalho %>%
+  filter(situacao %in% c("Contrato Iniciado",
+                         "Modelagem - Estudos Liderados pelo Setor Público Iniciados")) |>
+  distinct(nome, valor_contrato, situacao, supersegmento) |> 
+  ggplot()+
+  geom_boxplot(aes(y=supersegmento, x = valor_contrato)) +
+  facet_grid(situacao~.) +
+  scale_x_log10()
+
+
+
+```
+
