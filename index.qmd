@@ -11,7 +11,7 @@ execute:
 library(tidyverse)
 library(questionr)
 library(viridis)
-
+library(lubridate)
 
 dados_radar_ppp_trabalho <- readRDS("~/Github/analises_ppp/dados_radar_ppp_trabalho.rds")
 ```
