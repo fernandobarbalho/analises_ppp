@@ -412,13 +412,70 @@ dados_radar_ppp_trabalho %>%
 #| warning: false
 
 dados_radar_ppp_trabalho %>%
-  filter(situacao %in% c("Contrato Iniciado")) |>
+  filter(situacao %in% c("Contrato Iniciado",
+                         "Modelagem - Estudos Liderados pelo Setor Público Iniciados")) |>
   distinct(nome, valor_contrato, ente, supersegmento) |> 
   ggplot()+
   geom_boxplot(aes(x=ente, y = valor_contrato)) +
   facet_wrap(supersegmento~., nrow = 1) +
   scale_y_log10() +
   theme(
+    axis.text.x = element_text(angle = 90)
+  )
+
+
+```
+
+
+## Análises de séries temporais
+
+```{r}
+#| echo: false
+#| message: false
+#| warning: false
+
+
+dados_radar_ppp_trabalho %>%
+  filter(situacao %in% c("Contrato Iniciado")) |>
+  distinct(nome, ente, supersegmento, data_encerramento_licitacao) |> 
+  mutate(data_encerramento_licitacao = year(data_encerramento_licitacao)) |>
+  group_by(ente, supersegmento,  data_encerramento_licitacao) |>
+  summarise(
+    quantidade = n()
+  ) %>%
+  ggplot()+
+  geom_col(aes(x=data_encerramento_licitacao, y = quantidade, fill= ente), color= "white") +
+  scale_fill_viridis(discrete = TRUE)+
+  facet_wrap(supersegmento~., nrow = 2) +
+  theme_light() +
+  theme(
+    panel.grid = element_blank(),
+    axis.text.x = element_text(angle = 90)
+  )
+
+```
+
+```{r}
+#| echo: false
+#| message: false
+#| warning: false
+
+
+dados_radar_ppp_trabalho %>%
+  filter(situacao %in% c("Contrato Iniciado")) |>
+  distinct(nome, ente, supersegmento, data_encerramento_licitacao, valor_contrato) |> 
+  mutate(data_encerramento_licitacao = year(data_encerramento_licitacao)) |>
+  group_by(ente, supersegmento,  data_encerramento_licitacao) |>
+  summarise(
+    valor = sum(valor_contrato)
+  ) %>%
+  ggplot()+
+  geom_col(aes(x=data_encerramento_licitacao, y = valor, fill= ente), color= "white") +
+  scale_fill_viridis(discrete = TRUE)+
+  facet_wrap(supersegmento~., nrow = 2) +
+  theme_light() +
+  theme(
+    panel.grid = element_blank(),
     axis.text.x = element_text(angle = 90)
   )
 
