@@ -28,7 +28,7 @@ A identificação de variáveis com valores ausentes é importante para checar a
 summary(dados_radar_ppp_trabalho)
 ```
 
-Como se vê logo acima algumas colunas que podem ser muito inmportante para as análises apresentam valores ausentes, destaque para **data_encerramento_licitacao** e **valor_contrato**. É interessante fazer investigações mais aprofundada para conhecer melhor as regras de negócio associadas e identificar eventuais problemas na consistência da base de dados.
+Como se vê logo acima algumas colunas que podem ser muito inmportante para as análises apresentam valores ausentes, destaques para **data_encerramento_licitacao** e **valor_contrato**. É interessante fazer investigações mais aprofundadas para conhecer melhor as regras de negócio associadas e identificar eventuais problemas na consistência da base de dados.
 
 ### Distribuição dos dados de variáveis quantitativas
 
@@ -50,7 +50,7 @@ dados_radar_ppp_trabalho %>%
 \<Fazer a análise indicando que usa a escala logartimica, informar a quantidade baixa de contratos que registraram ressarcimentos, indicar a quantidade de contratos com pontos abaixo do mínimo do box-plot e ponto extremo superior.\>
 
 
-Agora vamos à distribuição dos valores de resssarcimentos de estudos em Reais
+Agora vamos à distribuição dos valores de **resssarcimentos de estudos em Reais**
 
 ```{r}
 #| echo: false
@@ -66,7 +66,7 @@ dados_radar_ppp_trabalho %>%
 
 \<Fazer a análise indicando que usa a escala logartimica, informar a quantidade baixa de contratos que registraram ressarcimentos, indicar a quantidade de contratos com pontos abaixo do mínimo do box-plot e ponto extremo superior.\>
 
-Por fim, a análise de distribuição para a variável de ressacimentos de estudos em dólares.
+Por fim, a análise de distribuição para a variável que trata de **ressacimentos de estudos em dólares.**
 
 ```{r}
 #| echo: false
@@ -389,6 +389,9 @@ dados_radar_ppp_trabalho %>%
 
 
 ```
+
+No gráfico acima percebe-se que apenas os projetos que estão no segmento de Infraestrutura Social apresenta valores para a situação **Modelagem - Estudos Liderados pelo Setor Público Iniciados**. Isso pode ser mais um indicativo de necessidade de aprofundamento sobre as regras de negócio e identificação de problemas de consistência da base de dados.
+
 
 ```{r}
 #| echo: false
