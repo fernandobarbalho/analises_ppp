@@ -28,7 +28,7 @@ A identificação de variáveis com valores ausentes é importante para checar a
 summary(dados_radar_ppp_trabalho)
 ```
 
-Como se vê logo acima \<...\>
+Como se vê logo acima algumas colunas que podem ser muito inmportante para as análises apresentam valores ausentes, destaque para **data_encerramento_licitacao** e **valor_contrato**. É interessante fazer investigações mais aprofundada para conhecer melhor as regras de negócio associadas e identificar eventuais problemas na consistência da base de dados.
 
 ### Distribuição dos dados de variáveis quantitativas
 
@@ -47,8 +47,8 @@ dados_radar_ppp_trabalho %>%
   
 
 ```
+\<Fazer a análise indicando que usa a escala logartimica, informar a quantidade baixa de contratos que registraram ressarcimentos, indicar a quantidade de contratos com pontos abaixo do mínimo do box-plot e ponto extremo superior.\>
 
-Aplicando a escala logarítimica (...)
 
 Agora vamos à distribuição dos valores de resssarcimentos de estudos em Reais
 
@@ -128,6 +128,8 @@ questionr::freq(nomes_situacao_distintos$situacao , cum = TRUE, sort = "dec", to
 
 \<Analisar a tabela, dando destaque aos três primeiros, e também à soma de paralisado com cancelado\>
 
+
+
 A opção de visualização em forma de gráfico
 
 ```{r}
@@ -176,7 +178,7 @@ nomes_segmentos_distintos %>%
 
 ### Gráficos de ranking
 
-Para os gráficos de ranking começamos com a indicação dos projetos com maiores valores de contratos em execução, sendo apresentados em ordem decrescente por empresa
+Para os gráficos de ranking começamos com a indicação dos projetos com maiores valores de contratos em execução, sendo apresentados em ordem decrescente por projeto
 
 ```{r}
 #| echo: false
@@ -195,6 +197,7 @@ dados_radar_ppp_trabalho %>%
 
 ```
 
+Aqui vale destacar que ao se fazer análise verificou-se **múltiplas contagens para as empresas**. Todas as empresas diversas vezes em vários papéis e com os mesmos valores de contrato para cada projeto. Isso pode ser indício de problema na base. Mais uma vez vale a pena investigar as regras de negócios que guiaram a construção da base e também a própria integridade da base.
 
 
 ### Associação entre variavéis categóricas
@@ -479,6 +482,16 @@ dados_radar_ppp_trabalho %>%
     axis.text.x = element_text(angle = 90)
   )
 
+
+```
+
+## Algumas análises avançadas
+
+```{r}
+modelo_regressao<- lm(valor_contrato ~ supersegmento + situacao + ente +modalidade_contrato + criterio_julgamento,
+                      data= dados_radar_ppp_trabalho)
+
+summary(modelo_regressao)
 
 ```
 
