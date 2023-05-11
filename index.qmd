@@ -12,6 +12,8 @@ library(tidyverse)
 library(questionr)
 library(viridis)
 library(lubridate)
+library(cluster)
+library(caret)
 
 dados_radar_ppp_trabalho <- readRDS("~/Github/analises_ppp/dados_radar_ppp_trabalho.rds")
 ```
@@ -28,7 +30,7 @@ A identificação de variáveis com valores ausentes é importante para checar a
 summary(dados_radar_ppp_trabalho)
 ```
 
-Como se vê logo acima algumas colunas que podem ser muito inmportante para as análises apresentam valores ausentes, destaques para **data_encerramento_licitacao** e **valor_contrato**. É interessante fazer investigações mais aprofundadas para conhecer melhor as regras de negócio associadas e identificar eventuais problemas na consistência da base de dados.
+Como se vê logo acima algumas colunas que podem ser muito importantes para as análises apresentam valores ausentes, destaques para **data_encerramento_licitacao** e **valor_contrato**. É interessante fazer investigações mais aprofundadas para conhecer melhor as regras de negócio associadas e identificar eventuais problemas na consistência da base de dados.
 
 ### Distribuição dos dados de variáveis quantitativas
 
@@ -490,11 +492,102 @@ dados_radar_ppp_trabalho %>%
 
 ## Algumas análises avançadas
 
+### Regressão linear
+
 ```{r}
-modelo_regressao<- lm(valor_contrato ~ supersegmento + situacao + ente +modalidade_contrato + criterio_julgamento,
+
+df_modelo<-
+  dados_radar_ppp_trabalho %>%
+  distinct(nome, ente, supersegmento, valor_contrato, modalidade_contrato, criterio_julgamento) %>%
+  filter(!is.na(valor_contrato))
+
+modelo_regressao<- lm(log(valor_contrato) ~ supersegmento + situacao + ente +modalidade_contrato + criterio_julgamento,
                       data= dados_radar_ppp_trabalho)
 
 summary(modelo_regressao)
 
+plot(modelo_regressao)
+
 ```
+
+
+### Análise de clusters para valor de contrato
+
+```{r}
+
+purrr::map_dbl(2:5,function(k){
+  set.seed(1972)
+  print(k)
+  model_cluster<- pam(x=df_modelo$valor_contrato,k)
+  model_cluster$silinfo$avg.width
+
+})
+
+modelo_3k<- pam(x=df_modelo$valor_contrato,3)
+
+#summary(modelo_3k)
+
+df_modelo_cluster<- df_modelo
+
+df_modelo_cluster$cluster<- modelo_3k$clustering
+
+df_modelo_cluster %>%
+  filter(cluster != 3) %>%
+  ggplot() +
+  geom_boxplot(aes(x=as.factor(cluster),y=valor_contrato)) 
+
+
+  
+
+
+```
+
+```{r}
+df_modelo_cluster<- df_modelo
+
+df_modelo_cluster$cluster<- modelo_3k$clustering
+
+df_modelo_cluster %>%
+  filter(cluster != 3) %>%
+  ggplot() +
+  geom_boxplot(aes(x=as.factor(cluster),y=valor_contrato)) +
+  scale_y_log10() +
+  facet_wrap(as.factor(cluster)~.)
+```
+
+
+
+```{r}
+df_modelo_cluster %>%
+  filter(cluster != 3) %>%
+  ggplot() +
+  geom_boxplot(aes(x=as.factor(cluster),y=valor_contrato)) +
+  facet_wrap(as.factor(cluster)~., scales = "free_y")
+
+```
+
+
+
+### Árvore de decisão
+
+```{r}
+control_dt <- trainControl(method="cv")
+
+df_modelo_dt<-
+  df_modelo_cluster %>%
+  mutate(cluster = as.factor(cluster)) %>%
+  select(-valor_contrato) %>%
+  #filter(cluster != 3) %>%
+  drop_na()
+
+set.seed(1972)
+Sys.time()
+dt_model <- train(cluster~., data=df_modelo_dt, method="rpart",  trControl=control_dt)
+Sys.time()
+
+library(rattle)
+fancyRpartPlot(dt_model$finalModel)
+
+```
+
 
