@@ -130,7 +130,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 
 </header>
 
-<div class="cell" data-hash="index_cache/html/unnamed-chunk-2_2c6f5dec7fbada5a6466e984effdf257">
+<div class="cell" data-hash="index_cache/html/unnamed-chunk-2_ea6f194c98acb38f3bcd9c582f09089b">
 
 </div>
 <section id="algumas-análises-exploratórias-de-dados" class="level2">
@@ -207,7 +207,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
                                    </code></pre>
 </div>
 </div>
-<p>Como se vê logo acima algumas colunas que podem ser muito inmportante para as análises apresentam valores ausentes, destaque para <strong>data_encerramento_licitacao</strong> e <strong>valor_contrato</strong>. É interessante fazer investigações mais aprofundada para conhecer melhor as regras de negócio associadas e identificar eventuais problemas na consistência da base de dados.</p>
+<p>Como se vê logo acima algumas colunas que podem ser muito importantes para as análises apresentam valores ausentes, destaques para <strong>data_encerramento_licitacao</strong> e <strong>valor_contrato</strong>. É interessante fazer investigações mais aprofundadas para conhecer melhor as regras de negócio associadas e identificar eventuais problemas na consistência da base de dados.</p>
 </section>
 <section id="distribuição-dos-dados-de-variáveis-quantitativas" class="level3">
 <h3 class="anchored" data-anchor-id="distribuição-dos-dados-de-variáveis-quantitativas">Distribuição dos dados de variáveis quantitativas</h3>
@@ -218,14 +218,14 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </div>
 </div>
 <p>&lt;Fazer a análise indicando que usa a escala logartimica, informar a quantidade baixa de contratos que registraram ressarcimentos, indicar a quantidade de contratos com pontos abaixo do mínimo do box-plot e ponto extremo superior.&gt;</p>
-<p>Agora vamos à distribuição dos valores de resssarcimentos de estudos em Reais</p>
+<p>Agora vamos à distribuição dos valores de <strong>resssarcimentos de estudos em Reais</strong></p>
 <div class="cell" data-hash="index_cache/html/unnamed-chunk-8_e3776eca4de53f8023f79ffa4b6ba2f9">
 <div class="cell-output-display">
 <p><img src="index_files/figure-html/unnamed-chunk-8-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
 <p>&lt;Fazer a análise indicando que usa a escala logartimica, informar a quantidade baixa de contratos que registraram ressarcimentos, indicar a quantidade de contratos com pontos abaixo do mínimo do box-plot e ponto extremo superior.&gt;</p>
-<p>Por fim, a análise de distribuição para a variável de ressacimentos de estudos em dólares.</p>
+<p>Por fim, a análise de distribuição para a variável que trata de <strong>ressacimentos de estudos em dólares.</strong></p>
 <div class="cell" data-hash="index_cache/html/unnamed-chunk-10_543caa1bec54b5d14a19bf4973587c74">
 <div class="cell-output-display">
 <p><img src="index_files/figure-html/unnamed-chunk-10-1.png" class="img-fluid" width="672"></p>
@@ -432,6 +432,7 @@ nomes_entes_situacao$ente Modelagem - Estudos Liderados pelo Setor Público Inic
 <p><img src="index_files/figure-html/unnamed-chunk-44-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
+<p>No gráfico acima percebe-se que apenas os projetos que estão no segmento de Infraestrutura Social apresenta valores para a situação <strong>Modelagem - Estudos Liderados pelo Setor Público Iniciados</strong>. Isso pode ser mais um indicativo de necessidade de aprofundamento sobre as regras de negócio e identificação de problemas de consistência da base de dados.</p>
 <div class="cell" data-hash="index_cache/html/unnamed-chunk-46_26fb79ac0f5908cc2926abbb408fc114">
 <div class="cell-output-display">
 <p><img src="index_files/figure-html/unnamed-chunk-46-1.png" class="img-fluid" width="672"></p>
@@ -459,135 +460,126 @@ nomes_entes_situacao$ente Modelagem - Estudos Liderados pelo Setor Público Inic
 </section>
 <section id="algumas-análises-avançadas" class="level2">
 <h2 class="anchored" data-anchor-id="algumas-análises-avançadas">Algumas análises avançadas</h2>
-<div class="cell" data-hash="index_cache/html/unnamed-chunk-54_8ae26670672f7bd54d8f2578bc7d268c">
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>modelo_regressao<span class="ot">&lt;-</span> <span class="fu">lm</span>(valor_contrato <span class="sc">~</span> supersegmento <span class="sc">+</span> situacao <span class="sc">+</span> ente <span class="sc">+</span>modalidade_contrato <span class="sc">+</span> criterio_julgamento,</span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>                      <span class="at">data=</span> dados_radar_ppp_trabalho)</span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(modelo_regressao)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<section id="regressão-linear" class="level3">
+<h3 class="anchored" data-anchor-id="regressão-linear">Regressão linear</h3>
+<div class="cell" data-hash="index_cache/html/unnamed-chunk-54_8f6f711dc63fdfbefca4691bf199a63a">
 <div class="cell-output cell-output-stdout">
 <pre><code>
 Call:
-lm(formula = valor_contrato ~ supersegmento + situacao + ente + 
-    modalidade_contrato + criterio_julgamento, data = dados_radar_ppp_trabalho)
+lm(formula = log(valor_contrato) ~ supersegmento + ente + modalidade_contrato + 
+    criterio_julgamento, data = df_modelo)
 
 Residuals:
-       Min         1Q     Median         3Q        Max 
--6.301e+09 -1.278e+09 -3.857e+08  2.461e+08  2.377e+11 
+     Min       1Q   Median       3Q      Max 
+-14.9595  -1.1261   0.1558   1.2503   6.6257 
 
 Coefficients:
-                                                                     Estimate
-(Intercept)                                                        -2.697e+09
-supersegmentoInfraestrutura Social                                  1.430e+08
-supersegmentoSaneamento                                             1.240e+09
-supersegmentoTransportes                                            1.699e+09
-situacaoConsulta Pública Aberta                                     1.123e+08
-situacaoConsulta Pública Encerrada                                  9.261e+08
-situacaoContrato Encerrado                                         -1.582e+08
-situacaoContrato Iniciado                                           3.257e+08
-situacaoLicitação Encerrada                                        -7.654e+08
-situacaoLicitação Iniciada                                          3.294e+08
-situacaoModelagem - Estudos Liderados pelo Setor Público Iniciados  2.552e+08
-situacaoModelagem - PMI Encerrado                                  -3.660e+08
-situacaoParalisado                                                  1.242e+09
-enteDistrito Federal                                                1.495e+09
-enteEstado                                                          2.367e+09
-enteMunicípio                                                       9.843e+08
-enteUnião                                                           4.883e+09
-modalidade_contratoConcessão Comum                                  3.296e+08
-modalidade_contratoConcessão de Direito Real de Uso                 4.287e+08
-modalidade_contratoConcessão de Uso                                -3.681e+08
-modalidade_contratoConcessão Patrocinada                            8.996e+08
-criterio_julgamentoMaior Lance                                      1.040e+09
-criterio_julgamentoMelhor Técnica                                  -3.480e+08
-criterio_julgamentoMenor Preço                                      1.852e+09
-criterio_julgamentoTécnica e Preço                                  1.109e+09
-                                                                   Std. Error
-(Intercept)                                                         5.167e+09
-supersegmentoInfraestrutura Social                                  1.692e+08
-supersegmentoSaneamento                                             1.768e+08
-supersegmentoTransportes                                            2.256e+08
-situacaoConsulta Pública Aberta                                     4.579e+08
-situacaoConsulta Pública Encerrada                                  2.446e+08
-situacaoContrato Encerrado                                          2.546e+08
-situacaoContrato Iniciado                                           1.620e+08
-situacaoLicitação Encerrada                                         3.003e+08
-situacaoLicitação Iniciada                                          3.114e+08
-situacaoModelagem - Estudos Liderados pelo Setor Público Iniciados  2.973e+09
-situacaoModelagem - PMI Encerrado                                   1.061e+09
-situacaoParalisado                                                  2.087e+08
-enteDistrito Federal                                                5.463e+08
-enteEstado                                                          4.818e+08
-enteMunicípio                                                       4.726e+08
-enteUnião                                                           5.061e+08
-modalidade_contratoConcessão Comum                                  1.617e+08
-modalidade_contratoConcessão de Direito Real de Uso                 8.046e+08
-modalidade_contratoConcessão de Uso                                 2.258e+08
-modalidade_contratoConcessão Patrocinada                            2.784e+08
-criterio_julgamentoMaior Lance                                      5.141e+09
-criterio_julgamentoMelhor Técnica                                   5.160e+09
-criterio_julgamentoMenor Preço                                      5.142e+09
-criterio_julgamentoTécnica e Preço                                  5.142e+09
-                                                                   t value
-(Intercept)                                                         -0.522
-supersegmentoInfraestrutura Social                                   0.846
-supersegmentoSaneamento                                              7.010
-supersegmentoTransportes                                             7.532
-situacaoConsulta Pública Aberta                                      0.245
-situacaoConsulta Pública Encerrada                                   3.786
-situacaoContrato Encerrado                                          -0.622
-situacaoContrato Iniciado                                            2.011
-situacaoLicitação Encerrada                                         -2.549
-situacaoLicitação Iniciada                                           1.058
-situacaoModelagem - Estudos Liderados pelo Setor Público Iniciados   0.086
-situacaoModelagem - PMI Encerrado                                   -0.345
-situacaoParalisado                                                   5.948
-enteDistrito Federal                                                 2.736
-enteEstado                                                           4.913
-enteMunicípio                                                        2.083
-enteUnião                                                            9.648
-modalidade_contratoConcessão Comum                                   2.038
-modalidade_contratoConcessão de Direito Real de Uso                  0.533
-modalidade_contratoConcessão de Uso                                 -1.630
-modalidade_contratoConcessão Patrocinada                             3.231
-criterio_julgamentoMaior Lance                                       0.202
-criterio_julgamentoMelhor Técnica                                   -0.067
-criterio_julgamentoMenor Preço                                       0.360
-criterio_julgamentoTécnica e Preço                                   0.216
-                                                                   Pr(&gt;|t|)    
-(Intercept)                                                        0.601693    
-supersegmentoInfraestrutura Social                                 0.397818    
-supersegmentoSaneamento                                            2.50e-12 ***
-supersegmentoTransportes                                           5.31e-14 ***
-situacaoConsulta Pública Aberta                                    0.806238    
-situacaoConsulta Pública Encerrada                                 0.000154 ***
-situacaoContrato Encerrado                                         0.534262    
-situacaoContrato Iniciado                                          0.044320 *  
-situacaoLicitação Encerrada                                        0.010818 *  
-situacaoLicitação Iniciada                                         0.290185    
-situacaoModelagem - Estudos Liderados pelo Setor Público Iniciados 0.931611    
-situacaoModelagem - PMI Encerrado                                  0.730130    
-situacaoParalisado                                                 2.78e-09 ***
-enteDistrito Federal                                               0.006223 ** 
-enteEstado                                                         9.07e-07 ***
-enteMunicípio                                                      0.037309 *  
-enteUnião                                                           &lt; 2e-16 ***
-modalidade_contratoConcessão Comum                                 0.041549 *  
-modalidade_contratoConcessão de Direito Real de Uso                0.594163    
-modalidade_contratoConcessão de Uso                                0.103117    
-modalidade_contratoConcessão Patrocinada                           0.001235 ** 
-criterio_julgamentoMaior Lance                                     0.839658    
-criterio_julgamentoMelhor Técnica                                  0.946228    
-criterio_julgamentoMenor Preço                                     0.718678    
-criterio_julgamentoTécnica e Preço                                 0.829267    
+                                                    Estimate Std. Error t value
+(Intercept)                                         16.71284    2.19455   7.616
+supersegmentoInfraestrutura Social                  -0.01291    0.24173  -0.053
+supersegmentoSaneamento                              1.27577    0.23797   5.361
+supersegmentoTransportes                             2.28025    0.29843   7.641
+enteDistrito Federal                                 1.16470    0.78645   1.481
+enteEstado                                           1.50114    0.65692   2.285
+enteMunicípio                                       -0.49978    0.63969  -0.781
+enteUnião                                            1.53831    0.68672   2.240
+modalidade_contratoConcessão Comum                  -2.06684    0.19950 -10.360
+modalidade_contratoConcessão de Direito Real de Uso -2.64385    0.69762  -3.790
+modalidade_contratoConcessão de Uso                 -3.08755    0.27139 -11.377
+modalidade_contratoConcessão Patrocinada            -1.08991    0.38670  -2.818
+criterio_julgamentoMaior Lance                       2.43562    2.09169   1.164
+criterio_julgamentoMelhor Técnica                   -0.75247    2.12213  -0.355
+criterio_julgamentoMenor Preço                       2.13381    2.09682   1.018
+criterio_julgamentoTécnica e Preço                   2.68220    2.09732   1.279
+                                                    Pr(&gt;|t|)    
+(Intercept)                                         5.10e-14 ***
+supersegmentoInfraestrutura Social                  0.957426    
+supersegmentoSaneamento                             9.82e-08 ***
+supersegmentoTransportes                            4.23e-14 ***
+enteDistrito Federal                                0.138862    
+enteEstado                                          0.022470 *  
+enteMunicípio                                       0.434778    
+enteUnião                                           0.025258 *  
+modalidade_contratoConcessão Comum                   &lt; 2e-16 ***
+modalidade_contratoConcessão de Direito Real de Uso 0.000158 ***
+modalidade_contratoConcessão de Uso                  &lt; 2e-16 ***
+modalidade_contratoConcessão Patrocinada            0.004900 ** 
+criterio_julgamentoMaior Lance                      0.244470    
+criterio_julgamentoMelhor Técnica                   0.722960    
+criterio_julgamentoMenor Preço                      0.309042    
+criterio_julgamentoTécnica e Preço                  0.201177    
 ---
 Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 
-Residual standard error: 5.138e+09 on 13513 degrees of freedom
-  (8519 observations deleted due to missingness)
-Multiple R-squared:  0.1147,    Adjusted R-squared:  0.1131 
-F-statistic: 72.95 on 24 and 13513 DF,  p-value: &lt; 2.2e-16</code></pre>
+Residual standard error: 2.088 on 1269 degrees of freedom
+  (28 observations deleted due to missingness)
+Multiple R-squared:  0.4148,    Adjusted R-squared:  0.4079 
+F-statistic: 59.97 on 15 and 1269 DF,  p-value: &lt; 2.2e-16</code></pre>
+</div>
+<div class="cell-output-display">
+<p><img src="index_files/figure-html/unnamed-chunk-54-1.png" class="img-fluid" width="672"></p>
+</div>
+<div class="cell-output-display">
+<p><img src="index_files/figure-html/unnamed-chunk-54-2.png" class="img-fluid" width="672"></p>
+</div>
+<div class="cell-output-display">
+<p><img src="index_files/figure-html/unnamed-chunk-54-3.png" class="img-fluid" width="672"></p>
+</div>
+<div class="cell-output-display">
+<p><img src="index_files/figure-html/unnamed-chunk-54-4.png" class="img-fluid" width="672"></p>
 </div>
 </div>
+<div class="cell" data-hash="index_cache/html/unnamed-chunk-56_e88df263566d9aa687def8db43d71d96">
+<div class="cell-output-display">
+<p><img src="index_files/figure-html/unnamed-chunk-56-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<div class="cell" data-hash="index_cache/html/unnamed-chunk-58_4c7f5789ef42d587a5f5ce71e4b002e5">
+<div class="cell-output-display">
+<p><img src="index_files/figure-html/unnamed-chunk-58-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</section>
+<section id="análise-de-clusters-para-valor-de-contrato" class="level3">
+<h3 class="anchored" data-anchor-id="análise-de-clusters-para-valor-de-contrato">Análise de clusters para valor de contrato</h3>
+<div class="cell" data-hash="index_cache/html/unnamed-chunk-60_b01cd44b285f28d1973af80ac3879f87">
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.8681133 0.8712455 0.7935915 0.7723079</code></pre>
+</div>
+<div class="cell-output-display">
+<p><img src="index_files/figure-html/unnamed-chunk-60-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<div class="cell" data-hash="index_cache/html/unnamed-chunk-62_6e2c2d9144c2ff3fd90951221cc6d8f3">
+<div class="cell-output-display">
+<p><img src="index_files/figure-html/unnamed-chunk-62-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<div class="cell" data-hash="index_cache/html/unnamed-chunk-64_de3e8f44062db85c3c93618837b61d55">
+<div class="cell-output-display">
+<p><img src="index_files/figure-html/unnamed-chunk-64-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</section>
+<section id="árvore-de-decisão" class="level3">
+<h3 class="anchored" data-anchor-id="árvore-de-decisão">Árvore de decisão</h3>
+<div class="cell" data-hash="index_cache/html/unnamed-chunk-66_c1989683a237c20a64efb138a9185ed2">
+<div class="cell-output-display">
+<p><img src="index_files/figure-html/unnamed-chunk-66-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<div class="cell" data-hash="index_cache/html/unnamed-chunk-68_c47200562ae59e7484ee8d85a9ffc002">
+<div class="cell-output-display">
+<p><img src="index_files/figure-html/unnamed-chunk-68-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>Pela árvore de decisão, um elemento também imortante é o ente para o segmento de Transportes. No caso, os municípios tendem estar pouco associados ao cluster de contratos de valores elevados que envolvem o setor transportes. A União por sua vez tem uma quantidade de contratos bem mais relevantes para o grupo de contratos de valores elevados do que para o grupo de menores valores quando considerado apenas o segmento de Transportes.</p>
+<div class="cell" data-hash="index_cache/html/unnamed-chunk-70_8c47dea6f785ceaf4a888532f40a5b93">
+<div class="cell-output-display">
+<p><img src="index_files/figure-html/unnamed-chunk-70-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</section>
 </section>
 
 </main>

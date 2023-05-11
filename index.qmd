@@ -14,6 +14,7 @@ library(viridis)
 library(lubridate)
 library(cluster)
 library(caret)
+library(patchwork)
 
 dados_radar_ppp_trabalho <- readRDS("~/Github/analises_ppp/dados_radar_ppp_trabalho.rds")
 ```
@@ -495,29 +496,73 @@ dados_radar_ppp_trabalho %>%
 ### Regressão linear
 
 ```{r}
+#| echo: false
+#| message: false
+#| warning: false
+
 
 df_modelo<-
   dados_radar_ppp_trabalho %>%
   distinct(nome, ente, supersegmento, valor_contrato, modalidade_contrato, criterio_julgamento) %>%
   filter(!is.na(valor_contrato))
 
-modelo_regressao<- lm(log(valor_contrato) ~ supersegmento + situacao + ente +modalidade_contrato + criterio_julgamento,
-                      data= dados_radar_ppp_trabalho)
+modelo_regressao<- lm(log(valor_contrato) ~ supersegmento  + ente +modalidade_contrato + criterio_julgamento,
+                      data= df_modelo)
 
 summary(modelo_regressao)
 
 plot(modelo_regressao)
 
+
+
 ```
+
+```{r}
+#| echo: false
+#| message: false
+#| warning: false
+
+
+dados_radar_ppp_trabalho %>%
+  filter(situacao %in% c("Contrato Iniciado",
+                         "Modelagem - Estudos Liderados pelo Setor Público Iniciados")) |>
+  distinct(nome,  modalidade_contrato) |> 
+  ggplot()+
+  geom_bar(aes(y=modalidade_contrato)) 
+
+```
+
+
+
+```{r}
+#| echo: false
+#| message: false
+#| warning: false
+
+
+dados_radar_ppp_trabalho %>%
+  filter(situacao %in% c("Contrato Iniciado",
+                         "Modelagem - Estudos Liderados pelo Setor Público Iniciados")) |>
+  distinct(nome, valor_contrato, modalidade_contrato) |> 
+  ggplot()+
+  geom_boxplot(aes(y=modalidade_contrato, x = valor_contrato)) +
+  scale_x_log10()
+
+```
+
 
 
 ### Análise de clusters para valor de contrato
 
 ```{r}
+#| echo: false
+#| message: false
+#| warning: false
+
 
 purrr::map_dbl(2:5,function(k){
   set.seed(1972)
-  print(k)
+  #print(k)
   model_cluster<- pam(x=df_modelo$valor_contrato,k)
   model_cluster$silinfo$avg.width
 
@@ -543,6 +588,10 @@ df_modelo_cluster %>%
 ```
 
 ```{r}
+#| echo: false
+#| message: false
+#| warning: false
+
 df_modelo_cluster<- df_modelo
 
 df_modelo_cluster$cluster<- modelo_3k$clustering
@@ -558,6 +607,10 @@ df_modelo_cluster %>%
 
 
 ```{r}
+#| echo: false
+#| message: false
+#| warning: false
+
 df_modelo_cluster %>%
   filter(cluster != 3) %>%
   ggplot() +
@@ -571,6 +624,10 @@ df_modelo_cluster %>%
 ### Árvore de decisão
 
 ```{r}
+#| echo: false
+#| message: false
+#| warning: false
+
 control_dt <- trainControl(method="cv")
 
 df_modelo_dt<-
@@ -581,13 +638,52 @@ df_modelo_dt<-
   drop_na()
 
 set.seed(1972)
-Sys.time()
 dt_model <- train(cluster~., data=df_modelo_dt, method="rpart",  trControl=control_dt)
-Sys.time()
 
 library(rattle)
 fancyRpartPlot(dt_model$finalModel)
 
 ```
 
+```{r}
+#| echo: false
+#| message: false
+#| warning: false
+
+
+df_modelo_cluster %>%
+  filter(cluster != 3) %>%
+  ggplot() +
+  geom_bar(aes(y= as.factor(cluster), 
+               fill = fct_reorder(supersegmento, supersegmento, length) ), position="fill") +
+  scale_fill_viridis(discrete = TRUE)+
+  theme_light() +
+  labs(fill= "segmento",
+       y="cluster") 
+
+    
+```
+
+
+Pela árvore de decisão, um elemento também imortante é o ente para o segmento de Transportes. No caso, os municípios tendem estar pouco associados ao cluster de contratos de valores elevados que envolvem o setor transportes. A União por sua vez tem uma quantidade de contratos bem mais relevantes para o grupo de contratos de valores elevados do que para o grupo de menores valores quando considerado apenas o segmento de Transportes. 
+
+
+```{r}
+#| echo: false
+#| message: false
+#| warning: false
+
+
+df_modelo_cluster %>%
+  filter(cluster != 3,
+         supersegmento == "Transportes") %>%
+  ggplot() +
+  geom_bar(aes(y= as.factor(cluster), 
+               fill = fct_reorder(ente, ente, length) ), position="fill") +
+  scale_fill_viridis(discrete = TRUE)+
+  theme_light() +
+  labs(fill= "ente",
+       y="cluster") 
+
+```
 
